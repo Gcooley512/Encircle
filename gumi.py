@@ -5,33 +5,13 @@ import urllib.parse
 from utils import Tyre
 import json
 
-"""
-We want to use BeautifulSoup to find all tyres with the size 205/55R16
-We can create a template of the url to search these tyres
-
-
-We want to request the search page and identify how many results there are
-these should all have their urls added to a list
-to find where the results are in the page we can look in ""product-card A card-view"" class
-These card views contain json data with all the inforescmation we need to create a dictionary of the results "data-json"
-
-all the necessary information we need to create a dictionary of the results is as follows:
-    - URL
-    - Brand
-    - Pattern (not sure what this means or if it is listed)
-    - width
-    - Aspect ratio
-    - Rim size
-    - Load index
-    - Speed rating
-    - Price
-We can create a class for these items and then add functionality in this class to add to a database or to a csv file
-"""
-
 
 def get_results(tyre_url, api_url, params):
+    # initialize an empty list to hold all results and a set to track seen URLs
     all_results = []
     seen_urls = set()
+
+    # create a session since we are making multiple requests to the same server
     session = requests.Session()
 
     while True:
@@ -107,18 +87,11 @@ def get_results(tyre_url, api_url, params):
         # increment the page number for the next request
         params['page'] += 1
 
-    # write all results to a CSV file
-    with open('tyres.csv', 'a') as f:
-        # if the file is empty then add headers
-        if f.tell() == 0:
-            f.write("URL,Brand,Pattern,Width,Aspect Ratio,Rim Size,Load Index,Speed Rating,Price\n")
-        for tyre in all_results:
-            f.write(tyre.to_csv_row() + "\n")
-
     return all_results
 
 
 def main():
+    # set the different URLs and parameters for the search
     api_url = "https://gumi.hu/api/searchAjax"
     tyre_url = "https://gumi.hu/autogumi"
     params = {'page': 1, 'width': 205, 'height': 55, 'diameter': 16}
@@ -126,9 +99,14 @@ def main():
     results = get_results(tyre_url, api_url, params)
     print("Results retrieved successfully.")
 
+    # write all results to a CSV file
+    with open('tyres.csv', 'a') as f:
+        # if the file is empty then add headers
+        if f.tell() == 0:
+            f.write("URL,Brand,Pattern,Width,Aspect Ratio,Rim Size,Load Index,Speed Rating,Price\n")
+        for tyre in results:
+            f.write(tyre.to_csv_row() + "\n")
 
 
 if __name__ == "__main__":
     main()
-
-

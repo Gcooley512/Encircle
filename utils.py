@@ -1,4 +1,8 @@
-import urllib.parse
+"""
+Utils contains common functions used across the project.
+The Tyre class is a data structure to hold tyre information.
+It has methods to convert the data to a CSV row and to print the tyre information in a readable format.
+"""
 
 
 class Tyre:
@@ -18,4 +22,3 @@ class Tyre:
 
     def to_csv_row(self):
         return f"{self.url},{self.brand},{self.pattern},{self.width},{self.aspect_ratio},{self.rim_size},{self.load_index},{self.speed_rating},{self.price}"
-
